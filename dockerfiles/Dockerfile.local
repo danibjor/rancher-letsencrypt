@@ -2,7 +2,11 @@ FROM alpine:3.12
 
 RUN apk -U upgrade --no-cache \
     && apk -U add --no-cache \
-    ca-certificates bash openssl curl
+        bash \
+        ca-certificates \
+        curl \
+        openssl \
+        tzdata
 
 ENV LETSENCRYPT_RELEASE v1.0.0
 ENV SSL_SCRIPT_COMMIT 08278ace626ada71384fc949bd637f4c15b03b53
@@ -10,10 +14,10 @@ ENV SSL_SCRIPT_COMMIT 08278ace626ada71384fc949bd637f4c15b03b53
 RUN curl -fSL https://raw.githubusercontent.com/rancher/rancher/${SSL_SCRIPT_COMMIT}/server/bin/update-rancher-ssl -o /usr/bin/update-rancher-ssl && \
     chmod +x /usr/bin/update-rancher-ssl
 
-COPY package/rancher-entrypoint.sh /usr/bin/
-COPY build/rancher-letsencrypt-linux-amd64 /usr/bin/rancher-letsencrypt
-
+COPY dockerfiles/rancher-entrypoint.sh /usr/bin/
+COPY dist/rancher-letsencrypt /usr/bin/rancher-letsencrypt
 RUN chmod +x /usr/bin/rancher-letsencrypt
 
 EXPOSE 80
-ENTRYPOINT ["/usr/bin/rancher-entrypoint.sh"]
+
+ENTRYPOINT [ "/usr/bin/rancher-entrypoint.sh" ]

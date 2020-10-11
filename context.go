@@ -14,8 +14,6 @@ import (
 
 const (
 	CERT_DESCRIPTION    = "Created by Let's Encrypt Certificate Manager"
-	ISSUER_PRODUCTION   = "Let's Encrypt"
-	ISSUER_STAGING      = "fake CA"
 	RENEWAL_PERIOD_DAYS = 20
 	RANCHER_SECRETS_DIR = "/run/secrets/"
 )
@@ -107,7 +105,7 @@ func (c *Context) InitContext() {
 		AuroraUserId:         getEnvOption("AURORA_USER_ID", false),
 		AuroraKey:            getEnvOption("AURORA_KEY", false),
 		AuroraEndpoint:       getEnvOption("AURORA_ENDPOINT", false),
-		CfApiEmail:   		  getEnvOption("CF_API_EMAIL", false),
+		CfApiEmail:           getEnvOption("CF_API_EMAIL", false),
 		CfApiKey:             getEnvOption("CF_API_KEY", false),
 		CfDnsApiToken:        getEnvOption("CF_DNS_API_TOKEN", false),
 		CfZoneApiToken:       getEnvOption("CF_ZONE_API_TOKEN", false),
@@ -118,7 +116,7 @@ func (c *Context) InitContext() {
 		DynUserName:          getEnvOption("DYN_USER_NAME", false),
 		DynPassword:          getEnvOption("DYN_PASSWORD", false),
 		VultrApiKey:          getEnvOption("VULTR_API_KEY", false),
-		OvhEndpoint:    	  getEnvOption("OVH_ENDPOINT", false),
+		OvhEndpoint:          getEnvOption("OVH_ENDPOINT", false),
 		OvhApplicationKey:    getEnvOption("OVH_APPLICATION_KEY", false),
 		OvhApplicationSecret: getEnvOption("OVH_APPLICATION_SECRET", false),
 		OvhConsumerKey:       getEnvOption("OVH_CONSUMER_KEY", false),

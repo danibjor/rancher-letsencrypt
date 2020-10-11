@@ -15,8 +15,8 @@ import (
 )
 
 type Account struct {
-	Email        string                     `json:"email"`
-	Registration *registration.Resource 	`json:"registrations"`
+	Email        string                 `json:"email"`
+	Registration *registration.Resource `json:"registrations"`
 
 	key  crypto.PrivateKey
 	path string

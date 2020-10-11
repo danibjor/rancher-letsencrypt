@@ -4,13 +4,24 @@
 
 .PHONY: build deps test release clean push image ci-compile build-dir ci-dist dist-dir ci-release version help
 
-PROJECT := rancher-letsencrypt
-PLATFORMS := linux
-ARCH := amd64
-DOCKER_IMAGE := smujaddid/$(PROJECT)
+GO111MODULE=on
+CGO_ENABLED=0
 
+DIST_OS=$(if $(GOOS),$(GOOS),$(shell go env GOOS))
+DIST_ARCH=$(if $(GOARCH),$(GOARCH),$(shell go env GOARCH))
+LINTER=$(shell go env GOPATH)
+
+PROJECT := rancher-letsencrypt
+BIN_FILE_NAME := $(PROJECT)
+BIN_OUTPUT := dist/$(BIN_FILE_NAME)
+
+SOURCE_FILES = $(shell git ls-files '*.go' | grep -v '^vendor/')
+
+DOCKER_IMAGE := smujaddid/$(PROJECT)
 VERSION := $(shell cat VERSION)
 SHA := $(shell git rev-parse --short HEAD)
+
+default: clean checks build
 
 all: help
 
@@ -20,82 +31,46 @@ help:
 	@echo "make vet - run vet & gofmt checks"
 	@echo "make test - run tests"
 	@echo "make clean - Duh!"
-	@echo "make release - tag with version and trigger CI release build"
-	@echo "make image - build Docker image"
-	@echo "make dockerhub - build and push dev image to Docker Hub"
+	@echo "make checks - run golangci-lint"
 	@echo "make version - show app version"
 
-build: build-dir
-	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags "-X main.Version=$(VERSION) -X main.Git=$(SHA)" -o build/$(PROJECT)-linux-amd64
+clean:
+	@echo "Cleaning build files"
+	go clean
+	rm -rf dist/ cover.out
 
-deps:
-	go get github.com/c4milo/github-release
+build: clean version
+	go build -ldflags "-X main.Version=$(VERSION) -X main.Git=$(SHA)" -o $(BIN_OUTPUT)
+
+version:
+	@echo $(VERSION) $(SHA)
 
 vet:
 	scripts/vet
 
 test:
-	go test -v ./...
+	go test -v -cover ./...
 
-docker:
-	docker build -t smujaddid/rancher-letsencrypt -f Dockerfile.local .
+checks:
+	$(shell go env GOPATH)/bin/golangci-lint run
 
-docker-run:
-	docker run -it --rm -d --name test --env-file .env smujaddid/rancher-letsencrypt
+fmt:
+	gofmt -s -l -w $(SOURCE_FILES)
 
-docker-run-bash:
-	docker run -it --rm -d --name test --env-file .env smujaddid/rancher-letsencrypt /bin/bash
+docker-local: build
+	docker build -t $(DOCKER_IMAGE):test -f ./dockerfiles/Dockerfile.local .
 
-docker-exec-bash:
-	docker exec -it test /bin/bash
+docker-local-run:
+	docker run -it --rm -d --name test --env-file .env $(DOCKER_IMAGE)
 
-docker-stop:
+docker-local-run-bash:
+	docker run -it --rm -d --name test --env-file .env $(DOCKER_IMAGE) /bin/bash
+
+docker-local-stop:
 	docker stop test
 
-release:
-	git tag -f `cat VERSION`
-	git push -f origin master --tags
+docker-local-shell:
+	docker exec -it test /bin/bash
 
-clean:
-	go clean
-	rm -fr ./build
-	rm -fr ./dist
-
-dockerhub: image
-	@echo "Pushing $(DOCKER_IMAGE):dev-$(SHA)"
-	docker push $(DOCKER_IMAGE):dev-$(SHA)
-
-image:
-	docker build -t $(DOCKER_IMAGE):dev-$(SHA) -f Dockerfile.dev .
-
-version:
-	@echo $(VERSION) $(SHA)
-
-ci-compile: build-dir $(PLATFORMS)
-
-build-dir:
-	@rm -rf build && mkdir build
-
-dist-dir:
-	@rm -rf dist && mkdir dist
-
-$(PLATFORMS):
-	CGO_ENABLED=0 GOOS=$@ GOARCH=$(ARCH) go build -ldflags "-X main.Version=$(VERSION) -X main.Git=$(SHA) -w -s" -a -o build/$(PROJECT)-$@-$(ARCH)/$(PROJECT)
-
-ci-dist: ci-compile dist-dir
-	$(eval FILES := $(shell ls build))
-	@for f in $(FILES); do \
-		(cd $(shell pwd)/build/$$f && tar -cvzf ../../dist/$$f.tar.gz *); \
-		(cd $(shell pwd)/dist && shasum -a 256 $$f.tar.gz > $$f.tar.gz.sha256); \
-		(cd $(shell pwd)/dist && md5sum $$f.tar.gz > $$f.tar.gz.md5); \
-		echo $$f; \
-	done
-	@cp -r $(shell pwd)/dist/* $(CIRCLE_ARTIFACTS)
-	ls $(CIRCLE_ARTIFACTS)
-
-ci-release:
-	@previous_tag=$$(git describe --abbrev=0 --tags $(VERSION)^); \
-	comparison="$$previous_tag..HEAD"; \
-	if [ -z "$$previous_tag" ]; then comparison=""; fi; \
-	changelog=$$(git log $$comparison --oneline --no-merges --reverse); \
-	github-release $(CIRCLE_PROJECT_USERNAME)/$(CIRCLE_PROJECT_REPONAME) $(VERSION) master "**Changelog**<br/>$$changelog" 'dist/*'
+docker-dev:
+	docker build -t $(DOCKER_IMAGE):dev-$(SHA) -f ./dockerfiles/Dockerfile.dev .

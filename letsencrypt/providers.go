@@ -32,10 +32,10 @@ type ProviderOpts struct {
 	AwsSecretKey string
 
 	// CloudFlare credentials
-	CfApiEmail string
-	CfApiKey   string
-	CfDnsApiToken   string
-	CfZoneApiToken   string
+	CfApiEmail     string
+	CfApiKey       string
+	CfDnsApiToken  string
+	CfZoneApiToken string
 
 	// DigitalOcean credentials
 	DoAccessToken string
@@ -52,7 +52,7 @@ type ProviderOpts struct {
 	NS1ApiKey string
 
 	// OVH credentials
-	OvhEndpoint    string
+	OvhEndpoint          string
 	OvhApplicationKey    string
 	OvhApplicationSecret string
 	OvhConsumerKey       string
@@ -82,16 +82,16 @@ type ProviderFactory struct {
 }
 
 var providerFactory = map[Provider]ProviderFactory{
-	AURORA:       ProviderFactory{makeAuroraProvider, challenge.DNS01},
-	CLOUDFLARE:   ProviderFactory{makeCloudflareProvider, challenge.DNS01},
-	DIGITALOCEAN: ProviderFactory{makeDigitalOceanProvider, challenge.DNS01},
-	DYN:          ProviderFactory{makeDynProvider, challenge.DNS01},
-	GANDI:        ProviderFactory{makeGandiProvider, challenge.DNS01},
-	NS1:          ProviderFactory{makeNS1Provider, challenge.DNS01},
-	OVH:          ProviderFactory{makeOvhProvider, challenge.DNS01},
-	ROUTE53:      ProviderFactory{makeRoute53Provider, challenge.DNS01},
-	VULTR:        ProviderFactory{makeVultrProvider, challenge.DNS01},
-	HTTP:         ProviderFactory{makeHTTPProvider, challenge.HTTP01},
+	AURORA:       {makeAuroraProvider, challenge.DNS01},
+	CLOUDFLARE:   {makeCloudflareProvider, challenge.DNS01},
+	DIGITALOCEAN: {makeDigitalOceanProvider, challenge.DNS01},
+	DYN:          {makeDynProvider, challenge.DNS01},
+	GANDI:        {makeGandiProvider, challenge.DNS01},
+	NS1:          {makeNS1Provider, challenge.DNS01},
+	OVH:          {makeOvhProvider, challenge.DNS01},
+	ROUTE53:      {makeRoute53Provider, challenge.DNS01},
+	VULTR:        {makeVultrProvider, challenge.DNS01},
+	HTTP:         {makeHTTPProvider, challenge.HTTP01},
 }
 
 func getProvider(opts ProviderOpts) (challenge.Provider, challenge.Type, error) {

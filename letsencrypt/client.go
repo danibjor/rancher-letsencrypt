@@ -12,12 +12,12 @@ import (
 	"time"
 
 	"github.com/Sirupsen/logrus"
-	loge "github.com/go-acme/lego/v3/log"
-	lego "github.com/go-acme/lego/v3/lego"
-	"github.com/go-acme/lego/v3/challenge"
-	"github.com/go-acme/lego/v3/challenge/dns01"
 	"github.com/go-acme/lego/v3/certcrypto"
 	"github.com/go-acme/lego/v3/certificate"
+	"github.com/go-acme/lego/v3/challenge"
+	"github.com/go-acme/lego/v3/challenge/dns01"
+	lego "github.com/go-acme/lego/v3/lego"
+	loge "github.com/go-acme/lego/v3/log"
 	"github.com/go-acme/lego/v3/registration"
 )
 
@@ -162,11 +162,11 @@ func (c *Client) EnableLogs() {
 
 // Issue obtains a new SAN certificate from the Lets Encrypt CA
 func (c *Client) Issue(certName string, domains []string) (*AcmeCertificate, error) {
-	obtainRequest := certificate.ObtainRequest {
-		Domains		: domains,
-		Bundle     	: true,
-		PrivateKey 	: nil,
-		MustStaple 	: false,
+	obtainRequest := certificate.ObtainRequest{
+		Domains:    domains,
+		Bundle:     true,
+		PrivateKey: nil,
+		MustStaple: false,
 	}
 
 	certRes, err := c.client.Certificate.Obtain(obtainRequest)
@@ -284,10 +284,10 @@ func (c *Client) saveCertificate(certName, dnsNames string, certRes *certificate
 	}
 
 	acmeCert := AcmeCertificate{
-		Resource: *certRes,
-		ExpiryDate:          expiryDate,
-		SerialNumber:        serialNumber,
-		DnsNames:            dnsNames,
+		Resource:     *certRes,
+		ExpiryDate:   expiryDate,
+		SerialNumber: serialNumber,
+		DnsNames:     dnsNames,
 	}
 
 	certPath := c.CertPath(certName)

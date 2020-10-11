@@ -2,12 +2,15 @@ FROM alpine:3.12
 
 RUN apk -U upgrade --no-cache \
     && apk -U add --no-cache \
-    ca-certificates bash curl
+        bash \
+        ca-certificates \
+        curl \
+        tzdata
 
-ADD build/rancher-letsencrypt-linux-amd64 /usr/bin/rancher-letsencrypt
+ADD dist/rancher-letsencrypt /usr/bin/rancher-letsencrypt
 
 RUN chmod +x /usr/bin/rancher-letsencrypt
 
-CMD ["/usr/bin/rancher-letsencrypt", "-debug", "-test-mode"]
+CMD [ "/usr/bin/rancher-letsencrypt", "-debug", "-test-mode" ]
 
 EXPOSE 80
