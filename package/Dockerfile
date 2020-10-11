@@ -1,11 +1,13 @@
-FROM alpine:3.5
+FROM alpine:3.12
 
-RUN apk add --no-cache ca-certificates openssl bash
+RUN apk -U upgrade --no-cache \
+    && apk -U add --no-cache \
+    ca-certificates bash openssl curl
 
 ENV LETSENCRYPT_RELEASE v1.0.0
 ENV SSL_SCRIPT_COMMIT 08278ace626ada71384fc949bd637f4c15b03b53
 
-RUN wget -O /usr/bin/update-rancher-ssl https://raw.githubusercontent.com/rancher/rancher/${SSL_SCRIPT_COMMIT}/server/bin/update-rancher-ssl && \
+RUN curl -fSL https://raw.githubusercontent.com/rancher/rancher/${SSL_SCRIPT_COMMIT}/server/bin/update-rancher-ssl -o /usr/bin/update-rancher-ssl && \
     chmod +x /usr/bin/update-rancher-ssl
 
 COPY rancher-entrypoint.sh /usr/bin/

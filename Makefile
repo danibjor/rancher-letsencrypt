@@ -7,7 +7,7 @@
 PROJECT := rancher-letsencrypt
 PLATFORMS := linux
 ARCH := amd64
-DOCKER_IMAGE := registry.vxcontrol.com:8443/$(PROJECT)
+DOCKER_IMAGE := smujaddid/$(PROJECT)
 
 VERSION := $(shell cat VERSION)
 SHA := $(shell git rev-parse --short HEAD)
@@ -38,7 +38,19 @@ test:
 	go test -v ./...
 
 docker:
-	docker build -t timw/rancher-letsencrypt -f Dockerfile.local .
+	docker build -t smujaddid/rancher-letsencrypt -f Dockerfile.local .
+
+docker-run:
+	docker run -it --rm -d --name test --env-file .env smujaddid/rancher-letsencrypt
+
+docker-run-bash:
+	docker run -it --rm -d --name test --env-file .env smujaddid/rancher-letsencrypt /bin/bash
+
+docker-exec-bash:
+	docker exec -it test /bin/bash
+
+docker-stop:
+	docker stop test
 
 release:
 	git tag -f `cat VERSION`

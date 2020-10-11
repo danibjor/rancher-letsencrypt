@@ -11,24 +11,25 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"time"
 
-	lego "github.com/xenolf/lego/acme"
+	"github.com/go-acme/lego/v3/certcrypto"
 )
 
-func generatePrivateKey(keyType lego.KeyType, file string) (crypto.PrivateKey, error) {
+func generatePrivateKey(keyType certcrypto.KeyType, file string) (crypto.PrivateKey, error) {
 	var privateKey crypto.PrivateKey
 	var err error
 
 	switch keyType {
-	case lego.EC256:
+	case certcrypto.EC256:
 		privateKey, err = ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
-	case lego.EC384:
+	case certcrypto.EC384:
 		privateKey, err = ecdsa.GenerateKey(elliptic.P384(), rand.Reader)
-	case lego.RSA2048:
+	case certcrypto.RSA2048:
 		privateKey, err = rsa.GenerateKey(rand.Reader, 2048)
-	case lego.RSA4096:
+	case certcrypto.RSA4096:
 		privateKey, err = rsa.GenerateKey(rand.Reader, 4096)
-	case lego.RSA8192:
+	case certcrypto.RSA8192:
 		privateKey, err = rsa.GenerateKey(rand.Reader, 8192)
 	default:
 		return nil, fmt.Errorf("Invalid KeyType: %s", keyType)
@@ -75,6 +76,20 @@ func loadPrivateKey(file string) (crypto.PrivateKey, error) {
 	}
 
 	return nil, fmt.Errorf("Unknown private key type.")
+}
+
+func getPEMCertExpiration(cert []byte) (time.Time, error) {
+	pemBlock, _ := pem.Decode(cert)
+	if pemBlock == nil {
+		return time.Time{}, fmt.Errorf("Pem decode did not yield a valid block")
+	}
+
+	pCert, err := x509.ParseCertificate(pemBlock.Bytes)
+	if err != nil {
+		return time.Time{}, err
+	}
+
+	return pCert.NotAfter, nil
 }
 
 func getPEMCertSerialNumber(cert []byte) (string, error) {
