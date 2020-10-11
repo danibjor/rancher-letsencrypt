@@ -1,4 +1,4 @@
-module github.com/vxcontrol/rancher-letsencrypt
+module github.com/smujaddid/rancher-letsencrypt
 
 go 1.13
 

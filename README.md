@@ -1,17 +1,42 @@
-![Rancher + Let's Encrypt = Awesome Sauce](https://raw.githubusercontent.com/vxcontrol/rancher-letsencrypt/master/hero.png)
+![Rancher + Let's Encrypt = Awesome Sauce](https://raw.githubusercontent.com/smujaddid/rancher-letsencrypt/master/hero.png)
 
 # Let's Encrypt Certificate Manager for Rancher
 
-[![Latest Version](https://img.shields.io/github/release/vxcontrol/rancher-letsencrypt.svg?maxAge=8600)][release]
-[![Circle CI](https://circleci.com/gh/vxcontrol/rancher-letsencrypt.svg?style=shield&circle-token=cd06c9a78ae3ef7b6c1387067c36360f62d97b7a)][circleci]
-[![Docker Pulls](https://img.shields.io/docker/pulls/vxcontrol/rancher-letsencrypt.svg?maxAge=8600)][hub]
-[![License](https://img.shields.io/github/license/vxcontrol/rancher-letsencrypt.svg?maxAge=8600)]()
+[![Latest Version](https://img.shields.io/github/release/smujaddid/rancher-letsencrypt.svg?maxAge=8600)][release]
+[![Docker Pulls](https://img.shields.io/docker/pulls/smujaddid/rancher-letsencrypt?style=for-the-badge&maxAge=8600)][hub]
+[![License](https://img.shields.io/github/license/smujaddid/rancher-letsencrypt.svg?maxAge=8600)]()
 
-[release]: https://github.com/vxcontrol/rancher-letsencrypt/releases
-[circleci]: https://circleci.com/gh/vxcontrol/rancher-letsencrypt
-[hub]: https://hub.docker.com/r/vxcontrol/rancher-letsencrypt/
+[release]: https://gitlab.com/smujaddid/rancher-letsencrypt/-/releases
+[hub]: https://hub.docker.com/r/smujaddid/rancher-letsencrypt/
 
 A [Rancher](http://rancher.com/rancher/) service that obtains free SSL/TLS certificates from the [Let's Encrypt CA](https://letsencrypt.org/), adds them to Rancher's certificate store and manages renewal and propagation of updated certificates to load balancers.
+
+# Fork Notes
+
+This is a forked version of [vxcontrol/rancher-letsencrypt](https://github.com/vxcontrol/rancher-letsencrypt/)
+
+I have updated the cloudflare provider to support Cloudflare's new API Token
+instead of using global API Key (will be removed later).
+This will improve account security when generating single or wild certificates for certain domain when you managing multiple domains in one account.
+
+Some provider were removed because of raised errors when running builds. These will be re-added back later.
+
+#### Changes
+* The following providers were removed in this forked version:
+  * DNSSimple
+  * Azure DNS
+* Replaced xenolf/lego go library with go-acme/lego v3, using version v3.1.0
+* Migrated to go modules
+* Release version using 2.x from now on, starting from 2.0.0-beta.x as a preview release
+* Built with alpine 3.12 as base environment
+
+#### Plans/Roadmap
+* Upgrade go version to 1.14
+* Upgrade `go-acme/lego` to v4.x
+* Add support for various DNS providers including previously removed providers
+* Remove Cloudflare's global API key usage
+* Fully use environment variables used by **lego** instead of defining our own
+  This is entirely because adding support for various provider is tiresome when I have to implement each of its own provider options
 
 #### Requirements
 * Rancher Server >= v1.5.0
@@ -157,3 +182,7 @@ Then make sure that HTTP requests to `domain.com/.well-known/acme-challenge` are
 ### Contributions
 
 PR's welcome!
+
+# Credits
+* Original author [janeczku/rancher-letsencrypt](https://github.com/janeczku/rancher-letsencrypt)
+* Original fork [vxcontrol/rancher-letsencrypt](https://github.com/vxcontrol/rancher-letsencrypt)

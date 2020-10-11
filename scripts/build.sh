@@ -1,5 +1,5 @@
 export GOPATH=/opt
-export PROJECT_AUTH=vxcontrol
+export PROJECT_AUTH=smujaddid
 export PROJECT_NAME=rancher-letsencrypt
 
 mkdir -p $GOPATH/src/github.com/$PROJECT_AUTH/
