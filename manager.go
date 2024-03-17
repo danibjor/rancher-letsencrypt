@@ -65,10 +65,10 @@ func (c *Context) startup() {
 	}
 
 	if c.Acme.ProviderName() == "HTTP" {
-		logrus.Info("Using HTTP challenge: Sleeping for 120 seconds before requesting certificate")
+		logrus.Info("Using HTTP challenge: Sleeping for 15 seconds before requesting certificate")
 		logrus.Info("Make sure that HTTP requests for '/.well-known/acme-challenge' for all certificate " +
 			"domains are forwarded to port 80 of the container running this application")
-		time.Sleep(120 * time.Second)
+		time.Sleep(15 * time.Second)
 	}
 
 	logrus.Infof("Trying to obtain SSL certificate (%s) from Let's Encrypt %s CA", strings.Join(c.Domains, ","), c.Acme.ApiVersion())
