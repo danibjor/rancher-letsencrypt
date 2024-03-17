@@ -1,15 +1,22 @@
-![Rancher + Let's Encrypt = Awesome Sauce](https://raw.githubusercontent.com/smujaddid/rancher-letsencrypt/master/hero.png)
+![Rancher + Let's Encrypt = Awesome Sauce](https://raw.githubusercontent.com/danibjor/rancher-letsencrypt/master/hero.png)
 
 # Let's Encrypt Certificate Manager for Rancher
 
-[![Latest Version](https://img.shields.io/github/release/smujaddid/rancher-letsencrypt.svg?maxAge=8600)][release]
-[![Docker Pulls](https://img.shields.io/docker/pulls/smujaddid/rancher-letsencrypt?style=for-the-badge&maxAge=8600)][hub]
-[![License](https://img.shields.io/github/license/smujaddid/rancher-letsencrypt.svg?maxAge=8600)]()
+[![Latest Version](https://img.shields.io/github/release/danibjor/rancher-letsencrypt.svg?maxAge=8600)][release]
+[![Docker Pulls](https://img.shields.io/docker/pulls/danibjor/rancher-letsencrypt?style=for-the-badge&maxAge=8600)][hub]
+[![Publish Docker image](https://github.com/danibjor/rancher-letsencrypt/actions/workflows/docker-image.yml/badge.svg)](https://github.com/danibjor/rancher-letsencrypt/actions/workflows/docker-image.yml)
 
-[release]: https://gitlab.com/smujaddid/rancher-letsencrypt/-/releases
-[hub]: https://hub.docker.com/r/smujaddid/rancher-letsencrypt/
+[release]: https://github.com/danibjor/rancher-letsencrypt/releases
+[hub]: https://hub.docker.com/r/danibjor/rancher-letsencrypt/
 
 A [Rancher](http://rancher.com/rancher/) service that obtains free SSL/TLS certificates from the [Let's Encrypt CA](https://letsencrypt.org/), adds them to Rancher's certificate store and manages renewal and propagation of updated certificates to load balancers.
+
+# Fork Notes v2
+
+Forked to ensure this repo don't get lost, as I use this image one some personal stuff.
+
+* Changed wait interval when using http for validation, from 120s to 15s (tired of waiting). 
+* Also set up Github Action that automatically pushed latest code to Docker Hub.
 
 # Fork Notes
 
